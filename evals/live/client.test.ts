@@ -10,6 +10,7 @@ function browser(t: any, options: { provider?: boolean; pendingMic?: Promise<any
     Object.defineProperty(globalThis, name, { configurable: true, writable: true, value });
   };
   let requested = 0, tracksStopped = 0;
+  const ticketRequests: {url: unknown; options: any}[] = [];
   const track = { onended: null as (() => void) | null, stop() { tracksStopped++; } };
   const stream = { getTracks: () => [track], getAudioTracks: () => [track] };
   const contexts: any[] = [], sockets: FakeSocket[] = [], nodes: any[] = [];
@@ -44,12 +45,23 @@ function browser(t: any, options: { provider?: boolean; pendingMic?: Promise<any
   install('window', { location: { origin: 'http://localhost:3000' }, addEventListener() {}, removeEventListener() {} });
   install('navigator', { mediaDevices: { getUserMedia: async () => { requested++; return options.pendingMic ?? stream; } } });
   install('AudioContext', FakeContext); install('AudioWorkletNode', FakeWorklet); install('WebSocket', FakeSocket);
-  install('fetch', async () => ({ ok: options.provider !== false, json: async () => options.provider === false
+  install('fetch', async (url: unknown, requestOptions: any) => {ticketRequests.push({url,options:requestOptions});return ({ ok: options.provider !== false, json: async () => options.provider === false
     ? { message: 'Live voice is unavailable. Continue by typing.' }
-    : { wsPath: '/live?ticket=synthetic-only', expiresAt: Date.now() + 30_000 } }));
+    : { wsPath: '/live?ticket=synthetic-only', expiresAt: Date.now() + 30_000 } });});
   t.after(() => { for (const [name, descriptor] of descriptors) { if (descriptor) Object.defineProperty(globalThis, name, descriptor); else delete (globalThis as any)[name]; } });
-  return { contexts, sockets, nodes, stream, track, requested: () => requested, tracksStopped: () => tracksStopped };
+  return { contexts, sockets, nodes, stream, track,ticketRequests, requested: () => requested, tracksStopped: () => tracksStopped };
 }
+
+test('external HTTPS relay uses WSS while its authenticated ticket stays on the same-origin web proxy',async t=>{
+ const env=browser(t),live=new LiveAudio(()=>{},()=>{},()=>{});
+ await live.start('synthetic-lesson','https://relay.example.test:8443');
+ t.after(()=>live.stop());
+ const socket=new URL(env.sockets[0].url);
+ assert.equal(socket.protocol,'wss:');assert.equal(socket.origin,'wss://relay.example.test:8443');
+ assert.equal(socket.pathname,'/live');assert.equal(socket.searchParams.get('ticket'),'synthetic-only');
+ assert.equal(env.ticketRequests[0].url,'/api/lessons/synthetic-lesson/live-ticket');
+ assert.equal(env.ticketRequests[0].options.credentials,'same-origin');
+});
 
 test('streamed captions accumulate within a speaker turn and playback remains speaking until drained', async t => {
   const env = browser(t), captions: string[] = [], states: string[] = [];

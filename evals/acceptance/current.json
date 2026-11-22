@@ -1,11 +1,11 @@
 {
-  "updatedAt": "2026-11-22T06:02:14.255Z",
+  "updatedAt": "2026-11-22T07:05:40.329Z",
   "status": "pilot_with_open_live_voice_gates",
   "checks": {
     "automated": {
-      "passed": 276,
-      "total": 276,
-      "typescript": 246,
+      "passed": 281,
+      "total": 281,
+      "typescript": 251,
       "collector": 3,
       "companion": 11,
       "parser": 13,
@@ -63,7 +63,9 @@
     "Human interruption latency",
     "20-minute participant lesson",
     "Independent instructor evaluation",
-    "Provider invoice reconciliation"
+    "Provider invoice reconciliation",
+    "Hosted Supabase and persistent API/worker provisioning",
+    "Real hosted frontend/API/auth/upload/voice integration"
   ],
   "privacy": "API keys, local uploads, raw live observations, one-use maintenance and generated screenshots/logs remain local and are excluded from Git.",
   "runCommands": [
@@ -74,5 +76,15 @@
     "pnpm dev"
   ],
   "guide": "SETUP.md",
-  "voiceDetails": "docs/implementation/dsa-voice-switching.md"
+  "voiceDetails": "docs/implementation/dsa-voice-switching.md",
+  "production": {
+    "buildFailureReproduced": true,
+    "formerlyFailingDevelopmentEnvironmentBuild": "passed with production wrapper",
+    "pdfWorkerProductionSmoke": "HTTP200 and pinned byte hash matched",
+    "publicApiOriginRouting": "focused contracts and WSS client tests passed",
+    "ciRunner": "Ubuntu24.04 pinned for Python3.12.12",
+    "hostedServiceConfiguration": "prepared; placeholder Compose validation passed; no services provisioned",
+    "hostedIntegration": "open",
+    "guide": "docs/implementation/production-hosting.md"
+  }
 }

@@ -4,7 +4,8 @@ permissions:
   contents: read
 jobs:
   verify:
-    runs-on: ubuntu-latest
+    # Python 3.12.12 has a published Ubuntu 24.04 build, not Ubuntu 26.04.
+    runs-on: ubuntu-24.04
     timeout-minutes: 25
     env:
       APP_MODE: fixture

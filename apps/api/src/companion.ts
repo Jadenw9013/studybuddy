@@ -63,16 +63,14 @@ export async function registerCompanion(
     };
     pairs.set(p.id, p);
     await deps.store.transact(a.owner,s=>{s.grants??=[];s.grants.push({id:p.id,lessonId:l.id,scopes:['watch','point','propose'],nonceDigest:p.secretHash,expiresAt:p.expiresAt});});
+    const companionUrl = new URL("/companion", deps.config.apiOrigin);
+    companionUrl.protocol = companionUrl.protocol === "https:" ? "wss:" : "ws:";
+    companionUrl.searchParams.set("secret", secret);
     return {
       pairId: p.id,
       secret,
       expiresAt: p.expiresAt,
-      url:
-        deps.config.origin
-          .replace(/^http/, "ws")
-          .replace(":3000", ":" + deps.config.port) +
-        "/companion?secret=" +
-        secret,
+      url: companionUrl.toString(),
     };
   });
   app.get<{ Params: { id: string } }>(

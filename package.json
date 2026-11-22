@@ -20,7 +20,7 @@
     "eval:live": "node evals/live/preflight.mjs",
     "eval:tutor:browser": "playwright test --config playwright.tutor-live.config.ts",
     "eval:voice:browser": "playwright test --config evals/live/voice.playwright.config.ts",
-    "build": "next build apps/web",
+    "build": "node scripts/build-web.mjs",
     "api": "tsx apps/api/src/index.ts",
     "web": "next dev apps/web -p 3000",
     "verify:handoff": "python scripts/verify-handoff.py",

@@ -1,0 +1,14 @@
+{
+  "name": "@studybuddy/web",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "build": "node ../../scripts/build-web.mjs",
+    "start": "next start --hostname 0.0.0.0"
+  },
+  "dependencies": {
+    "next": "16.4.6",
+    "react": "19.3.1",
+    "react-dom": "19.3.1"
+  }
+}

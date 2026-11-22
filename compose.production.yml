@@ -1,0 +1,58 @@
+# Host-agnostic API + worker deployment. This does not provision a public host,
+# TLS edge, database, credentials, or a paid subscription.
+name: studybuddy-production
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    env_file:
+      - ${STUDYBUDDY_PRODUCTION_ENV_FILE:-.env.production}
+    environment:
+      NODE_ENV: production
+      APP_MODE: live
+      DEV_AUTH_BYPASS: "false"
+      API_HOST: 0.0.0.0
+      API_PORT: "3001"
+      DATA_DIR: /var/lib/studybuddy
+    # Put the host's HTTPS/WSS reverse proxy in front of this loopback port.
+    ports:
+      - "127.0.0.1:3001:3001"
+    volumes:
+      - api-state:/var/lib/studybuddy
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - "fetch('http://127.0.0.1:3001/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+      interval: 30s
+      timeout: 5s
+      start_period: 30s
+      retries: 3
+    restart: unless-stopped
+    stop_grace_period: 45s
+
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile.worker
+    # The worker receives only what its poll/parse loop needs; no database,
+    # Supabase service key, model credentials or Stripe secret is forwarded.
+    environment:
+      NODE_ENV: production
+      API_INTERNAL_ORIGIN: http://api:3001
+      INTERNAL_WORKER_SECRET: ${INTERNAL_WORKER_SECRET:?Set the private shared worker secret}
+      ENABLE_HYBRID: ${ENABLE_HYBRID:-false}
+      BGE_CACHE_DIR: /var/cache/studybuddy-models
+    volumes:
+      - worker-cache:/var/cache/studybuddy-models
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  api-state:
+  worker-cache:

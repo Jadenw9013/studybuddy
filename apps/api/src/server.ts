@@ -277,7 +277,7 @@ export async function buildServer(config: Config, options: {illustrationProvider
     authentication: config.devAuthBypass ? "local_test" : "required",
     supabaseUrl: config.supabaseUrl ?? "",
     publishableKey: config.supabaseKey ?? "",
-    apiOrigin: config.origin.replace(":3000", ":" + config.port),
+    apiOrigin: config.apiOrigin,
     providerReadiness: config.providerReadiness,
     textAvailable: config.providerReadiness.text.configured,
     liveAvailable:

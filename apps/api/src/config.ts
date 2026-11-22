@@ -5,6 +5,26 @@ export function loadConfig(
 ) {
   const mode = env.APP_MODE ?? "live",
     origin = env.WEB_ORIGIN ?? "http://localhost:3000";
+  const port = Number(env.API_PORT ?? 3001);
+  let apiPublicOrigin: string | undefined;
+  if (env.API_PUBLIC_ORIGIN?.trim()) {
+    const value = env.API_PUBLIC_ORIGIN;
+    let parsed: URL;
+    try {
+      parsed = new URL(value);
+    } catch {
+      throw Error("API_PUBLIC_ORIGIN must be a bare HTTP(S) origin.");
+    }
+    if (
+      !/^https?:\/\/[^/?#\\\s]+\/?$/i.test(value) ||
+      !["http:", "https:"].includes(parsed.protocol) ||
+      parsed.username || parsed.password || parsed.pathname !== "/" ||
+      parsed.search || parsed.hash
+    ) throw Error("API_PUBLIC_ORIGIN must be a bare HTTP(S) origin without credentials, path, query or fragment.");
+    if (env.NODE_ENV === "production" && parsed.protocol !== "https:")
+      throw Error("API_PUBLIC_ORIGIN must use HTTPS in production.");
+    apiPublicOrigin = parsed.origin;
+  }
   if (!["live", "fixture"].includes(mode))
     throw Error("APP_MODE must be live or fixture");
   const devAuthBypass = env.DEV_AUTH_BYPASS === "true";
@@ -77,7 +97,8 @@ export function loadConfig(
     devAuthBypass,
     devAuthUserId: env.DEV_AUTH_USER_ID,
     origin,
-    port: Number(env.API_PORT ?? 3001),
+    apiOrigin: apiPublicOrigin ?? origin.replace(":3000", ":" + port),
+    port,
     databaseUrl: env.DATABASE_URL,
     supabaseUrl: env.SUPABASE_URL,
     supabaseKey: env.SUPABASE_PUBLISHABLE_KEY,
