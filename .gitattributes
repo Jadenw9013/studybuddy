@@ -1,0 +1,9 @@
+# Normalize source code while preserving revision-pinned Markdown and skills.
+* text=auto eol=lf
+*.md -text
+.agents/** -text
+fixtures/** -text
+patches/** -text
+*.pdf binary
+*.png binary
+*.wav binary

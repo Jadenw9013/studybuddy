@@ -1,0 +1,19 @@
+{
+  "fixtures/attempt.ipynb": "c5ee958796558c1cdb30322266f6faa8f110e2e3ee7995ff764d7bb77bc93539",
+  "fixtures/decoys/no-text.pdf": "a35955083241f063b6cb2b7e56424780a589167998963fc1ad017efb7c5a974f",
+  "fixtures/decoys/probability.csv": "5508b372c08d6ceeeb2452f1409289208685d96be29f394859b4dc4bee8f9955",
+  "fixtures/decoys/quoted.csv": "178d59bbfcbb6e9be0bcdb32918dfb692308bf3f32fa98c55e4ffa1f1752b56d",
+  "fixtures/decoys/regression.csv": "9686d121451abbc9dc090883164d0c7a6e3fab64d46e3b66af59fe344e05dcad",
+  "fixtures/decoys/untrusted-instructions.txt": "04be3ad8dde0e605ade6de12dfb093cea717f37a3f3b0101d2207b3d1c32cd22",
+  "fixtures/demo/attempt.ipynb": "c5ee958796558c1cdb30322266f6faa8f110e2e3ee7995ff764d7bb77bc93539",
+  "fixtures/demo/lecture.pdf": "946fedb9715e8d0f1fc19219dcc687b2f581406368915c2f13d39377d541d21d",
+  "fixtures/demo/scores.csv": "a24ff8712bf0b01b24f7a33165f1010e12b3ac4df37b9eeaf85b8b5996690acd",
+  "fixtures/lecture.pdf": "946fedb9715e8d0f1fc19219dcc687b2f581406368915c2f13d39377d541d21d",
+  "fixtures/scores.csv": "a24ff8712bf0b01b24f7a33165f1010e12b3ac4df37b9eeaf85b8b5996690acd",
+  "fixtures/unseen/attempt-renamed.ipynb": "541a19134312410d00dd52204bd76a896782403da15d194df8233cbb1cf8e087",
+  "fixtures/unseen/attempt.ipynb": "541a19134312410d00dd52204bd76a896782403da15d194df8233cbb1cf8e087",
+  "fixtures/unseen/commute-values.csv": "fc4070dd5e73ac8ee46627593102fdde68f776e6cfeaeacad2569fc2070b5997",
+  "fixtures/unseen/lecture-renamed.pdf": "3cb0247bd2e3cbb300b5c433ee78bcc54204e0261decab7e1924d6c2ce60b8e6",
+  "fixtures/unseen/lecture.pdf": "3cb0247bd2e3cbb300b5c433ee78bcc54204e0261decab7e1924d6c2ce60b8e6",
+  "fixtures/unseen/measurements.csv": "fc4070dd5e73ac8ee46627593102fdde68f776e6cfeaeacad2569fc2070b5997"
+}

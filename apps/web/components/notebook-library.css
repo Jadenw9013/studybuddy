@@ -1,0 +1,557 @@
+.notebook-library {
+  --nl-bg: #101010;
+  --nl-surface: #1e1e20;
+  --nl-line: #353439;
+  --nl-muted: #b8b5bf;
+  --nl-text: #f0edf5;
+  --nl-accent: #c8c3ee;
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  min-height: 100%;
+  padding: clamp(22px, 2.8vw, 42px);
+  background: var(--nl-bg);
+  color: var(--nl-text);
+  font-family: "Segoe UI", sans-serif;
+}
+.notebook-library *,
+.notebook-library *::before,
+.notebook-library *::after {
+  box-sizing: border-box;
+}
+.notebook-library button,
+.notebook-library input,
+.notebook-library select {
+  font: inherit;
+}
+.notebook-library button {
+  min-height: 44px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  box-shadow: none;
+  text-transform: none;
+  letter-spacing: normal;
+  transition:
+    background-color 0.15s,
+    border-color 0.15s;
+}
+.notebook-library button:hover {
+  transform: none;
+}
+.notebook-library button:disabled {
+  cursor: wait;
+  opacity: 0.55;
+}
+.notebook-library :is(button, input, select):focus-visible {
+  outline: 2px solid var(--nl-accent);
+  outline-offset: 4px;
+}
+.notebook-library .nl-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 30px;
+}
+.notebook-library .nl-header h1 {
+  font-size: clamp(27px, 2.6vw, 34px);
+  line-height: 1.15;
+  font-weight: 550;
+  letter-spacing: -0.035em;
+  margin: 0 0 10px;
+}
+.notebook-library .nl-header p {
+  margin: 0;
+  color: var(--nl-muted);
+  font-size: 14px;
+  line-height: 1.6;
+}
+.notebook-library .nl-create {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  gap: 9px;
+  padding: 11px 20px;
+  border-radius: 28px;
+  background: var(--nl-accent);
+  color: #242032;
+  font-size: 14px;
+  font-weight: 600;
+}
+.notebook-library .nl-create:hover {
+  background: #d8d3fa;
+}
+.notebook-library .nl-secondary {
+  border: 1px solid #55515f;
+  border-radius: 24px;
+  background: transparent;
+  color: var(--nl-text);
+  padding: 10px 19px;
+}
+.notebook-library .nl-search {
+  max-width: 660px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 54px;
+  padding: 0 17px;
+  background: #232326;
+  border: 1px solid #3c3b40;
+  border-radius: 28px;
+  margin-bottom: 30px;
+  color: #c4c0ce;
+}
+.notebook-library .nl-search > svg {
+  flex: none;
+}
+.notebook-library .nl-search input {
+  width: 100%;
+  min-width: 0;
+  background: transparent;
+  border: 0;
+  padding: 15px 0;
+  color: var(--nl-text);
+  font-size: 14px;
+}
+.notebook-library .nl-search input::placeholder {
+  color: #b8b5bf;
+}
+.notebook-library .nl-search input:focus-visible {
+  outline: none;
+}
+.notebook-library .nl-search:focus-within {
+  outline: 2px solid var(--nl-accent);
+  outline-offset: 3px;
+}
+.notebook-library .nl-search button {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  min-width: 44px;
+  margin-right: -10px;
+  padding: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--nl-text);
+}
+.notebook-library .nl-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+.notebook-library .nl-filters,
+.notebook-library .nl-view-options,
+.notebook-library .nl-view-toggle {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex-wrap: wrap;
+}
+.notebook-library .nl-filters button {
+  background: transparent;
+  color: #c7c3ce;
+  border-color: #434147;
+  border-radius: 24px;
+  padding: 9px 16px;
+  font-size: 13px;
+  white-space: nowrap;
+}
+.notebook-library .nl-filters button[aria-pressed="true"] {
+  background: #d5d1eb;
+  border-color: #d5d1eb;
+  color: #24202e;
+}
+.notebook-library .nl-view-options {
+  gap: 16px;
+  margin-left: auto;
+}
+.notebook-library .nl-sort {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 0;
+  color: var(--nl-muted);
+  font-size: 12px;
+}
+.notebook-library .nl-sort select {
+  width: auto;
+  min-height: 44px;
+  max-width: 190px;
+  border: 1px solid #434147;
+  background: #1b1b1d;
+  color: var(--nl-text);
+  padding: 9px 30px 9px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+}
+.notebook-library .nl-view-toggle {
+  gap: 0;
+  border: 1px solid #434147;
+  border-radius: 24px;
+  overflow: hidden;
+}
+.notebook-library .nl-view-toggle button {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  border-radius: 0;
+  padding: 0;
+  background: transparent;
+  color: #c4c0ce;
+}
+.notebook-library .nl-view-toggle button[aria-pressed="true"] {
+  background: #3e394d;
+  color: #e5defe;
+}
+.notebook-library .nl-view-toggle button:focus-visible {
+  outline-offset: -4px;
+}
+.notebook-library .nl-result-count {
+  color: #aaa6b1;
+  margin: 22px 0 14px;
+  font-size: 12px;
+}
+.notebook-library .nl-notebooks {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 248px), 1fr));
+  gap: 20px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+.notebook-library .nl-notebook {
+  position: relative;
+  min-width: 0;
+  overflow: hidden;
+  background: var(--nl-surface);
+  border: 1px solid #303034;
+  border-radius: 27px;
+}
+.notebook-library .nl-notebook:hover {
+  background: #262528;
+  border-color: #57515f;
+}
+.notebook-library .nl-notebook-open {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  gap: 15px;
+  min-height: 178px;
+  width: 100%;
+  padding: 25px 25px 16px;
+  border-radius: 0;
+  background: transparent;
+  color: var(--nl-text);
+}
+.notebook-library .nl-notebook-open:focus-visible {
+  outline-offset: -5px;
+}
+.notebook-library .nl-notebook-glyph {
+  display: grid;
+  place-items: center;
+  color: var(--nl-glyph, #b7adf4);
+  width: 45px;
+  height: 47px;
+  border: 1px solid
+    color-mix(in srgb, var(--nl-glyph, #b7adf4) 40%, transparent);
+  border-radius: 11px;
+  background: color-mix(in srgb, var(--nl-glyph, #b7adf4) 11%, transparent);
+}
+.notebook-library .nl-notebook-glyph svg {
+  width: 30px;
+  height: 30px;
+}
+.notebook-library .nl-notebook-name {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+  padding-right: 8px;
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 1.28;
+  letter-spacing: -0.025em;
+}
+.notebook-library .nl-notebook-action {
+  color: #bcb4d1;
+  font-size: 12px;
+  margin-top: auto;
+}
+.notebook-library .nl-rename {
+  position: absolute;
+  top: 13px;
+  right: 11px;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  padding: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: #b9b4c2;
+}
+.notebook-library .nl-rename:hover {
+  background: #3a3542;
+}
+.notebook-library .nl-notebook-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0 13px;
+  padding: 0 25px 20px;
+  color: var(--nl-muted);
+  font-size: 12px;
+}
+.notebook-library .nl-notebook-meta button {
+  padding: 0;
+  min-height: 44px;
+  background: transparent;
+  color: #d3c9ec;
+  font-size: 12px;
+  border-radius: 4px;
+}
+.notebook-library .nl-notebook-meta time {
+  display: block;
+  width: 100%;
+  color: #aaa6b1;
+  line-height: 1.7;
+}
+.notebook-library .nl-count-unknown {
+  width: 100%;
+  font-size: 11px;
+  color: #aaa6b1;
+}
+.notebook-library .nl-tone-lilac {
+  --nl-glyph: #b7adf4;
+}
+.notebook-library .nl-tone-mint {
+  --nl-glyph: #91cbbb;
+}
+.notebook-library .nl-tone-sand {
+  --nl-glyph: #d7bd8d;
+}
+.notebook-library .nl-tone-rose {
+  --nl-glyph: #d4a6bc;
+}
+.notebook-library .nl-tone-blue {
+  --nl-glyph: #9cbde0;
+}
+.notebook-library .nl-list {
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+.notebook-library .nl-list .nl-notebook {
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) minmax(160px, 250px) 42px;
+  align-items: center;
+  padding-right: 12px;
+  border-radius: 16px;
+}
+.notebook-library .nl-list .nl-notebook-open {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr);
+  min-height: 105px;
+  gap: 4px 20px;
+  padding: 18px 22px;
+}
+.notebook-library .nl-list .nl-notebook-glyph {
+  grid-row: span 2;
+  width: 44px;
+  height: 48px;
+}
+.notebook-library .nl-list .nl-notebook-name {
+  font-size: 19px;
+}
+.notebook-library .nl-list .nl-notebook-action {
+  margin: 0;
+}
+.notebook-library .nl-list .nl-notebook-meta {
+  padding: 12px;
+}
+.notebook-library .nl-list .nl-rename {
+  position: static;
+}
+.notebook-library .nl-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 330px;
+  padding: 35px 20px;
+}
+.notebook-library .nl-empty-icon {
+  display: grid;
+  place-items: center;
+  width: 66px;
+  height: 66px;
+  border-radius: 20px;
+  background: #282431;
+  color: #cbc2eb;
+  margin-bottom: 18px;
+}
+.notebook-library .nl-empty-icon svg {
+  width: 33px;
+  height: 33px;
+}
+.notebook-library .nl-empty h2 {
+  margin: 0 0 10px;
+  font-size: 24px;
+  font-weight: 500;
+  letter-spacing: -0.025em;
+}
+.notebook-library .nl-empty p {
+  color: var(--nl-muted);
+  font-size: 14px;
+  margin: 0 0 23px;
+}
+.notebook-library .nl-status {
+  padding: 70px 0;
+  text-align: center;
+  color: var(--nl-muted);
+}
+.notebook-library .nl-error {
+  color: #ffbcc4;
+  background: #39252b;
+  padding: 12px 15px;
+  border-radius: 10px;
+  font-size: 13px;
+}
+.notebook-library .nl-rename-dialog {
+  width: min(440px, calc(100% - 32px));
+  border: 1px solid #55515e;
+  border-radius: 22px;
+  padding: 28px;
+  background: #242226;
+  color: var(--nl-text);
+}
+.notebook-library .nl-rename-dialog::backdrop {
+  background: #050508b8;
+  backdrop-filter: blur(4px);
+}
+.notebook-library .nl-rename-dialog h2 {
+  font-size: 24px;
+  font-weight: 500;
+  letter-spacing: -0.025em;
+  margin: 0 0 23px;
+}
+.notebook-library .nl-rename-dialog label {
+  color: #d0cbd7;
+  font-size: 13px;
+}
+.notebook-library .nl-rename-dialog input {
+  display: block;
+  width: 100%;
+  margin-top: 9px;
+  padding: 12px;
+  border: 1px solid #676071;
+  border-radius: 10px;
+  background: #151317;
+  color: var(--nl-text);
+}
+.notebook-library .nl-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 24px;
+}
+.notebook-library .nl-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+@media (max-width: 720px) {
+  .notebook-library {
+    padding: 26px 18px;
+  }
+  .notebook-library .nl-header {
+    align-items: flex-start;
+    gap: 18px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+  }
+  .notebook-library .nl-header h1 {
+    font-size: 30px;
+  }
+  .notebook-library .nl-header .nl-create {
+    padding: 10px 16px;
+  }
+  .notebook-library .nl-search {
+    margin-bottom: 22px;
+    max-width: none;
+  }
+  .notebook-library .nl-toolbar {
+    gap: 14px;
+  }
+  .notebook-library .nl-filters {
+    width: 100%;
+  }
+  .notebook-library .nl-filters button {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+  .notebook-library .nl-view-options {
+    width: 100%;
+    justify-content: space-between;
+    margin: 0;
+    gap: 8px;
+  }
+  .notebook-library .nl-sort {
+    gap: 7px;
+  }
+  .notebook-library .nl-sort select {
+    max-width: 160px;
+    padding-right: 22px;
+  }
+  .notebook-library .nl-notebooks {
+    gap: 14px;
+  }
+  .notebook-library .nl-notebook-open {
+    min-height: 190px;
+  }
+  .notebook-library .nl-list .nl-notebook {
+    grid-template-columns: minmax(0, 1fr) 44px;
+  }
+  .notebook-library .nl-list .nl-notebook-open {
+    grid-column: 1;
+    min-width: 0;
+    padding: 17px;
+    gap: 4px 13px;
+  }
+  .notebook-library .nl-list .nl-notebook-meta {
+    grid-column: 1;
+    padding: 0 17px 12px;
+  }
+  .notebook-library .nl-list .nl-rename {
+    grid-column: 2;
+    grid-row: 1;
+  }
+  .notebook-library .nl-list .nl-notebook-name {
+    font-size: 18px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .notebook-library button {
+    transition: none;
+  }
+}
+@media (forced-colors: active) {
+  .notebook-library .nl-notebook,
+  .notebook-library button,
+  .notebook-library .nl-search {
+    border: 1px solid ButtonText;
+  }
+  .notebook-library button[aria-pressed="true"] {
+    outline: 2px solid Highlight;
+  }
+}

@@ -1,0 +1,15 @@
+import { defineConfig } from "@playwright/test";
+export default defineConfig({
+  testDir: "./evals/tutor-live",
+  workers: 1,
+  retries: 0,
+  timeout: 90_000,
+  reporter: [["list"]],
+  outputDir: ".data/tutor-live-test",
+  use: {
+    baseURL: "http://localhost:3000",
+    browserName: "chromium",
+    trace: "off",
+    screenshot: "off",
+  },
+});

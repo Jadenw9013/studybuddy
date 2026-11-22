@@ -1,0 +1,100 @@
+{
+  "format": "live-tutor-dsa-v1",
+  "title": "Mock DSA: binary search tree",
+  "description": "A nine-node binary search tree with unique numeric values. All values in a left subtree are smaller than its parent and all values in a right subtree are larger. Search for 7 (present) or 5 (absent), compare the visited paths, and inspect why inorder traversal is sorted. These are synthetic teaching data.",
+  "structure": {
+    "kind": "bst",
+    "directed": true,
+    "rootId": "n8",
+    "nodes": [
+      {
+        "id": "n8",
+        "label": "8",
+        "value": 8
+      },
+      {
+        "id": "n3",
+        "label": "3",
+        "value": 3
+      },
+      {
+        "id": "n10",
+        "label": "10",
+        "value": 10
+      },
+      {
+        "id": "n1",
+        "label": "1",
+        "value": 1
+      },
+      {
+        "id": "n6",
+        "label": "6",
+        "value": 6
+      },
+      {
+        "id": "n14",
+        "label": "14",
+        "value": 14
+      },
+      {
+        "id": "n4",
+        "label": "4",
+        "value": 4
+      },
+      {
+        "id": "n7",
+        "label": "7",
+        "value": 7
+      },
+      {
+        "id": "n13",
+        "label": "13",
+        "value": 13
+      }
+    ],
+    "edges": [
+      {
+        "from": "n8",
+        "to": "n3",
+        "side": "left"
+      },
+      {
+        "from": "n8",
+        "to": "n10",
+        "side": "right"
+      },
+      {
+        "from": "n3",
+        "to": "n1",
+        "side": "left"
+      },
+      {
+        "from": "n3",
+        "to": "n6",
+        "side": "right"
+      },
+      {
+        "from": "n10",
+        "to": "n14",
+        "side": "right"
+      },
+      {
+        "from": "n6",
+        "to": "n4",
+        "side": "left"
+      },
+      {
+        "from": "n6",
+        "to": "n7",
+        "side": "right"
+      },
+      {
+        "from": "n14",
+        "to": "n13",
+        "side": "left"
+      }
+    ]
+  },
+  "teachingExample": true
+}

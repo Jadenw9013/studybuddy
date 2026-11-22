@@ -1,0 +1,9 @@
+node_modules/
+.venv/
+lib/
+live_tutor_companion/
+.runtime/
+.config/
+evals/.ipynb_checkpoints/
+evals/companion-other.ipynb
+evals/companion-renamed-*.ipynb

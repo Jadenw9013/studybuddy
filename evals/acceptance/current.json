@@ -1,0 +1,78 @@
+{
+  "updatedAt": "2026-11-22T06:02:14.255Z",
+  "status": "pilot_with_open_live_voice_gates",
+  "checks": {
+    "automated": {
+      "passed": 276,
+      "total": 276,
+      "typescript": 246,
+      "collector": 3,
+      "companion": 11,
+      "parser": 13,
+      "embedding": 3
+    },
+    "relay": {
+      "passed": 20,
+      "total": 20,
+      "includedInAutomated": true
+    },
+    "fixtureBrowser": {
+      "passed": 25,
+      "total": 25,
+      "fixture": true
+    },
+    "finalAffectedBrowserRerun": {
+      "passed": 8,
+      "total": 8,
+      "fixture": true
+    },
+    "postgresSuites": {
+      "passed": 7,
+      "total": 7
+    },
+    "typecheck": "passed",
+    "productionBuild": "passed",
+    "canonicalHandoffHashes": {
+      "matched": 15,
+      "total": 15
+    }
+  },
+  "latestLiveTrial": {
+    "syntheticData": true,
+    "syntheticSpeech": true,
+    "humanParticipants": 0,
+    "completeTurns": 3,
+    "plannedTurns": 9,
+    "passed": false,
+    "failedAt": "binary-tree source switch",
+    "cause": "create attempted on existing board; rejected twice",
+    "incorrectVisualPublished": false
+  },
+  "finalCorrection": {
+    "change": "Omit board.create when the authoritative connection snapshot already has a board; retain replacement and patch operations. Give operation-specific guidance after create is rejected on a board created later within an initially empty connection. No automatic conversion of creates into edits.",
+    "providerVerification": "open: the one approved extra paid attempt was used; no further paid call made.",
+    "deterministicRelayChecks": "20/20 passed",
+    "fullAutomatedChecks": "276/276 passed"
+  },
+  "earlierObservations": "BFS, DFS, spoken inorder tree and spoken BST ready states were observed in an earlier trial; uninterrupted nine-turn acceptance has not passed.",
+  "openGates": [
+    "Complete nine-turn live voice journey",
+    "Live confirmation of final existing-board tool-registry correction",
+    "Live mobile Stop gate after the full journey",
+    "Human microphone/device audibility",
+    "Human interruption latency",
+    "20-minute participant lesson",
+    "Independent instructor evaluation",
+    "Provider invoice reconciliation"
+  ],
+  "privacy": "API keys, local uploads, raw live observations, one-use maintenance and generated screenshots/logs remain local and are excluded from Git.",
+  "runCommands": [
+    "pnpm install --frozen-lockfile",
+    "pnpm run setup",
+    "pnpm db:start",
+    "pnpm db:migrate",
+    "pnpm dev"
+  ],
+  "guide": "SETUP.md",
+  "voiceDetails": "docs/implementation/dsa-voice-switching.md"
+}

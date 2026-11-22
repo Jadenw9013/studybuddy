@@ -1,0 +1,71 @@
+{
+  "format": "live-tutor-dsa-v1",
+  "title": "Mock DSA: undirected graph with a cycle",
+  "description": "A seven-node undirected graph for comparing breadth-first search (BFS) and depth-first search (DFS). Start at A. For ties, inspect neighbours in the order they appear in the nodes list. The E-G-F-C-A-B-E cycle makes marking discovered nodes important. These are synthetic teaching data, not a learner submission.",
+  "structure": {
+    "kind": "graph",
+    "directed": false,
+    "rootId": "A",
+    "nodes": [
+      {
+        "id": "A",
+        "label": "A"
+      },
+      {
+        "id": "B",
+        "label": "B"
+      },
+      {
+        "id": "C",
+        "label": "C"
+      },
+      {
+        "id": "D",
+        "label": "D"
+      },
+      {
+        "id": "E",
+        "label": "E"
+      },
+      {
+        "id": "F",
+        "label": "F"
+      },
+      {
+        "id": "G",
+        "label": "G"
+      }
+    ],
+    "edges": [
+      {
+        "from": "A",
+        "to": "B"
+      },
+      {
+        "from": "A",
+        "to": "C"
+      },
+      {
+        "from": "B",
+        "to": "D"
+      },
+      {
+        "from": "B",
+        "to": "E"
+      },
+      {
+        "from": "C",
+        "to": "F"
+      },
+      {
+        "from": "E",
+        "to": "G"
+      },
+      {
+        "from": "F",
+        "to": "G"
+      }
+    ]
+  },
+  "teachingExample": true
+}

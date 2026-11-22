@@ -1,0 +1,33 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { LocalCompanion, sha256, pairingURL } from '../src/core.mjs';
+
+async function fixture() {
+  let source = 'ax.hist(scores, bins=4, density=False)', documentId = 'notebook-1';
+  let writes = 0, now = 1000, saved;
+  const host = { read: async (document, cellId) => document === documentId ? {documentId, cellId, source, revision: writes} : null,
+    write: (document, cellId, before, after) => { if (document !== documentId || source !== before) return null; source = after; writes++; return {revision:writes}; }, focus:()=>{},highlight:()=>{} };
+  const engine = new LocalCompanion(host, {now:()=>now,persist:value=>saved=value});
+  engine.pair({expiresAt:10000,scopes:['watch','point','propose']},documentId);
+  const replacement = 'ax.hist(scores, bins=5, density=True)';
+  const action = {actionId:'edit-1',type:'notebook.propose',documentId,cellId:'plot1',baseHash:await sha256(source),expiresAt:9000,args:{replacement,expectedHash:await sha256(replacement)}};
+  return {engine,action,host,get source(){return source;},get writes(){return writes;},get saved(){return saved;},edit: s=>source=s,switch:()=>documentId='notebook-2',expire:()=>now=10001};
+}
+
+test('a remote proposal only previews; local Apply writes exactly once and a receipt survives reload without source',async()=>{
+  const f=await fixture();assert.equal((await f.engine.command(f.action)).status,'previewed');assert.equal(f.writes,0);
+  const token=f.engine.pending.token;assert.equal((await f.engine.apply(token)).status,'applied');assert.equal(f.writes,1);
+  assert.equal((await f.engine.apply(token)).status,'revoked');assert.equal((await f.engine.command(f.action)).status,'applied');assert.equal(f.writes,1);
+  assert.ok(!JSON.stringify(f.saved).includes('ax.hist'));
+  const restored=new LocalCompanion(f.host,{receipts:f.saved});assert.equal(restored.receipt('edit-1'),null);restored.pair({expiresAt:Date.now()+10000,scopes:['watch','point','propose']},'notebook-1');assert.equal(restored.receipt('edit-1').status,'applied');
+});
+test('student edit between preview and Apply is preserved',async()=>{const f=await fixture();await f.engine.command(f.action);const token=f.engine.pending.token;f.edit('my independent work');assert.equal((await f.engine.apply(token)).status,'target_changed');assert.equal(f.source,'my independent work');assert.equal(f.writes,0);});
+test('document switch, revoke and expired approval deny edits',async()=>{for(const mode of ['switch','expire','revoke']){const f=await fixture();await f.engine.command(f.action);const token=f.engine.pending.token;if(mode==='revoke')f.engine.revoke();else f[mode]();assert.ok(['target_changed','expired','revoked'].includes((await f.engine.apply(token)).status));assert.equal(f.writes,0);}});
+test('reject preserves source and conflicting action replay cannot mutate',async()=>{const f=await fixture();await f.engine.command(f.action);assert.equal(f.engine.dismiss('rejected').status,'rejected');assert.equal(f.writes,0);assert.equal((await f.engine.command({...f.action,args:{...f.action.args,replacement:'different'}})).status,'payload_conflict');});
+test('undo is a separately approved inverse and refuses a later student edit',async()=>{const f=await fixture();const before=f.source;await f.engine.command(f.action);await f.engine.apply(f.engine.pending.token);const undo={...f.action,actionId:'undo-1',type:'notebook.undo',baseHash:await sha256(f.source),args:{undoActionId:'edit-1',expectedHash:await sha256(before)}};assert.equal((await f.engine.command(undo)).status,'previewed');assert.equal(f.writes,1);assert.equal((await f.engine.apply(f.engine.pending.token)).status,'undone');assert.equal(f.source,before);assert.equal(f.writes,2);});
+test('arbitrary commands, external insecure URLs and bad replacement hashes are rejected',async()=>{const f=await fixture();assert.equal((await f.engine.command({...f.action,type:'notebook.apply'})).status,'invalid_params');assert.equal((await f.engine.command({...f.action,args:{...f.action.args,expectedHash:'0'.repeat(64)}})).status,'invalid_params');assert.throws(()=>pairingURL('ws://remote.example/companion?secret='+'a'.repeat(43)));assert.throws(()=>pairingURL('wss://example.com/companion?secret='+'a'.repeat(43)+'&other=1'));assert.equal(pairingURL('ws://localhost:3001/companion?secret='+'a'.repeat(43)).hostname,'localhost');});
+test('concurrent duplicate delivery does not write and a missing local token is denied',async()=>{const f=await fixture();const result=await Promise.all([f.engine.command(f.action),f.engine.command(f.action)]);assert.deepEqual(result.map(x=>x.status),['previewed','previewed']);assert.equal(f.writes,0);assert.equal((await f.engine.apply('remote-cannot-guess-local-preview-token')).status,'revoked');assert.equal(f.writes,0);});
+test('grant revoked during asynchronous source recheck cannot commit',async()=>{const f=await fixture();await f.engine.command(f.action);const token=f.engine.pending.token;const original=f.host.read;f.host.read=async(...args)=>{const value=await original(...args);f.engine.revoke();return value;};assert.equal((await f.engine.apply(token)).status,'target_changed');assert.equal(f.writes,0);});
+test('safe undo refuses to overwrite a newer independent change',async()=>{const f=await fixture();const before=f.source;await f.engine.command(f.action);await f.engine.apply(f.engine.pending.token);const undo={...f.action,actionId:'undo-stale',type:'notebook.undo',baseHash:await sha256(f.source),args:{undoActionId:'edit-1',expectedHash:await sha256(before)}};f.edit('student edit after applied proposal');assert.equal((await f.engine.command(undo)).status,'target_changed');assert.equal(f.writes,1);assert.equal(f.source,'student edit after applied proposal');});
+test('receipt lookup is unavailable after Stop or in another lesson',async()=>{const f=await fixture();await f.engine.command(f.action);await f.engine.apply(f.engine.pending.token);assert.equal(f.engine.receipt('edit-1').status,'applied');f.engine.revoke();assert.equal(f.engine.receipt('edit-1'),null);f.engine.pair({lessonId:'different-lesson',expiresAt:10000,scopes:['watch','point','propose']},'notebook-1');assert.equal(f.engine.receipt('edit-1'),null);});
+test('invalid cached receipts cannot break local approval authority',async()=>{const f=await fixture();assert.doesNotThrow(()=>new LocalCompanion(f.host,{receipts:{invalid:true}}));const e=new LocalCompanion(f.host,{receipts:[null,['bad',{payload:'raw source',receipt:{actionId:'bad',status:'applied'}}]]});assert.equal(e.receipts.size,0);});

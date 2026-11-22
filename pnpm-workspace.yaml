@@ -1,0 +1,11 @@
+packages:
+  - apps/*
+  - packages/*
+  - extensions/*
+
+onlyBuiltDependencies:
+  - sharp
+  - esbuild
+
+patchedDependencies:
+  '@google/genai@3.3.0': patches/@google__genai@3.3.0.patch

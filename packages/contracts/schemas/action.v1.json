@@ -1,0 +1,135 @@
+{
+  "$id": "tutor.action.v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "actionId",
+    "sessionId",
+    "turnEpoch",
+    "type",
+    "targetId",
+    "expectedRevision",
+    "args"
+  ],
+  "properties": {
+    "actionId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "sessionId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "turnEpoch": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "type": {
+      "enum": [
+        "board.create",
+        "board.patch",
+        "board.undo",
+        "source.open",
+        "course.search",
+        "practice.present",
+        "practice.record",
+        "screen.point",
+        "notebook.focus",
+        "notebook.highlight",
+        "notebook.propose",
+        "notebook.undo"
+      ]
+    },
+    "targetId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "expectedRevision": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "args": {
+      "type": "object",
+      "maxProperties": 12
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "enum": ["board.create", "board.patch"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "args": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "kind": {
+                "enum": ["histogram", "regression", "probability"]
+              },
+              "sourceId": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128
+              },
+              "column": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128
+              },
+              "xColumn": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128
+              },
+              "yColumn": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128
+              },
+              "binCount": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 50
+              },
+              "edges": {
+                "type": "array",
+                "minItems": 2,
+                "maxItems": 51,
+                "items": {
+                  "type": "number"
+                }
+              },
+              "mode": {
+                "enum": ["count", "density"]
+              },
+              "label": {
+                "type": "string",
+                "maxLength": 120
+              },
+              "cells": {
+                "type": "array",
+                "minItems": 4,
+                "maxItems": 4,
+                "items": {
+                  "type": "number",
+                  "minimum": 0
+                }
+              },
+              "conditioning": {
+                "enum": ["row0", "row1", "column0", "column1"]
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

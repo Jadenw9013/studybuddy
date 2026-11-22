@@ -1,0 +1,41 @@
+# Gemini text and voice readiness
+
+**Final browser update:** the reviewed third probe passed. It observed a checked vector/chart paint proxy at 1,438 ms, first PCM packet at 2,083 ms and scheduling at 2,084 ms, followed by interruption, authorized synthetic frame forwarding and a separate forced reconnect preserving board identity/revision. The synthetic microphone is not human audio evidence. Both earlier failed runs remain retained; participant-marked useful audio, twenty-minute and invoice gates remain open. See [current acceptance](acceptance-v3.md).
+
+The configured models remain `gemini-3.8-flash` and `gemini-3.8-live`. A root-run account model-list request on 2026-11-20 returned HTTP 200 and advertised `generateContent` for Flash and `bidiGenerateContent` for Live. Discovery does not establish successful generation, audible teaching quality or a completed lesson. This worker's network sandbox could not reach the endpoint; paid probes run through the root's authorized network access.
+
+Observed provider probes: the latest Flash acknowledgement passed in 1,463 ms (6 input / 1 output token). After repairing the locked SDK endpoint with a reproducible pnpm patch and explicitly selecting `v1beta`, Live completed the two-stage synthetic provider probe in **4,792 ms**: **11 PCM packets / 117,600 bytes**, one trusted histogram tool call, and three usage observations. First audio packet arrived **1,198 ms** after the provider-probe start. The probe obtained basic speech and speech after the tool response; no browser playback or human participated. Earlier handshake/zero-audio failures were retained as failures, not counted as successful lessons. The endpoint regression passes without opening a socket.
+
+The revision-pinned `gemini-live-api-dev` skill and current Google documentation were consulted through Context7 and the official pages. [Standard pricing](https://aistudio.google.com/docs/pricing#gemini-3.8-flash) currently charges Flash $0.75 input, $3.75 output including thinking, and $0.075 cached input per million tokens through 2026-12-31. Google announces doubled Flash rates starting 2027-01-01. [Live pricing](https://aistudio.google.com/docs/pricing#gemini-3.8-live) charges input text/audio/image $0.75/$3/$1 and output text/audio $4.50/$12 per million tokens. No Live caching discount is assumed: cache is estimated at full input rates. DOCUMENT and VIDEO usage map to IMAGE for billing, per the pricing notes.
+
+Run these from the repository root:
+
+```powershell
+# Free account discovery only; no generated content.
+node evals/live/provider-readiness.mjs
+
+# Verify both exact models; privately write reviewed rates/limits and enable Live.
+# One tiny text generation and one 15-second text-to-audio/tool probe follow.
+node evals/live/provider-readiness.mjs --configure --smoke
+
+# Repeat deterministic lifecycle, cost and stale-output checks (no provider calls).
+pnpm exec tsx --test apps/api/test/meter.test.ts evals/live/relay.test.ts evals/live/client.test.ts
+
+# Explicitly paid, against the already-running local live app; synthetic mic.
+$env:RUN_PAID_VOICE_BROWSER='true'
+pnpm exec playwright test --config evals/live/voice.playwright.config.ts
+```
+
+The script preserves all other `.env` settings and credentials. It refuses to configure unlisted/unsupported models, substitute a model or use this reviewed rate schedule after its validity date. `pnpm eval:live -- --smoke` delegates to the same script; direct invocation avoids package-manager argument ambiguity. Reports are ignored local JSON under `evals/live/results/provider-readiness.json`, containing only model IDs, numeric usage and gate states. It stores no raw audio or generated response text.
+
+Actual Live usage omitted some modality attribution and sometimes a zero response counter; its thoughts counter was separate from the reported total. The meter retains those numeric provider fields verbatim and records unmatched input/output/thought/cache counts. Where totals and reviewed supported-modality rates establish a bound, it provisions each unmatched token at the highest applicable configured rate, includes thoughts conservatively, and labels the record `conservative_live_usage_upper_bound`. Cached tokens receive no discount in this fallback. Distinct periodic/cumulative observations are each provisioned in full, rather than subtracting an assumed cumulative baseline; exact event-ID replays deduplicate. These may overestimate cost and are not reconciled invoices. Malformed/inconsistent totals, missing supported rates or unbounded counters still block further paid work, and upper-bound units count against session/pass ceilings.
+
+The first Chromium relay attempt failed before provider connection: the local test profile had **zero remaining live seconds**. It produced no connecting state, provider tool or audio packet. The original generic `provider_unavailable` observation is preserved in the failed run; admission now returns the specific `quota_exhausted` code. This attempt establishes an admission failure, not a failed Gemini handshake. Local testing needs an explicitly documented development allowance; it does not establish a fulfilled purchase or authorize resetting previous usage/holds.
+
+The second Chromium attempt reached the real production relay: exact requested vectors and an authenticated paint receipt appeared within **1,480 ms** of the voice click; **23 provider PCM packets were scheduled in the real AudioContext**, with first packet/scheduling proxies **2,035 / 2,038 ms**. Explicit interruption advanced the epoch and resumed confirmed state. The synthetic PNG was forwarded (`frame_sent`, `fixture:false`), but the test incorrectly looked for a lesson hash in metrics that identify sessions by run hash, so the overall run remains failed. Root reviewed this instrumentation error and authorized exactly one corrected third run, preserving both failed runs and all usage history. The corrected test correlates the browser's SHA-256 run-ID digest with the same sanitized server metric; raw run IDs, media and transcripts are not written. Separate forced reconnect and human/device gates are still open until observed.
+
+Text reservations allow at most 16,384 input and 4,096 output tokens ($0.027648 at the current maximum full-input price). Multiple model calls in a tutor turn each require their own atomic reservation, usage settlement and ID. The live session ceilings permit 80,000 text / 100,000 audio / 10,000 image input tokens and 10,000 text / 30,000 audio output tokens, reserving $0.775. Cache counts are subsets of input, never extra reserved tokens. The existing per-pass ceiling remains unchanged. These are local usage bounds rather than a provider invoice or promise of a full twenty-minute conversation. Retained history is rebilled each turn; the relay now compresses at 8,192 tokens toward 4,096 and caps each reply at 1,024 output tokens, matching the successful provider probe. See [Google's cost guidance](https://aistudio.google.com/docs/live-api/best-practices#managing-costs). Price expiry stops new reservations and active live heartbeats until an operator reviews new rates.
+
+`loadConfig().providerReadiness.text` and `.voice` expose `{configured, reason}` without credentials. Configured means key, switches and reviewed bounds are present; account generation success comes only from observed probes. The existing server `/api/config.liveAvailable` also checks metering readiness. The relay uses persisted usage authorization before continuing, one-use connection tickets, fixed media bounds, immediate local playback interruption and one bounded reconnect. Browser captions now accumulate streamed fragments, and the status remains “Tutor speaking” until queued audio actually drains.
+
+Provider-only audio packets and tool replies cannot pass the real microphone, useful audible answer, exact visible chart, screen question, interruption, forced reconnect, twenty-minute human lesson or invoice reconciliation gates. Those remain open until observed with a browser and participant using the protocol in `evals/live/README.md`. No fabricated fixture measurements may fill them. Audio and screen frames are never persisted. Caption retention remains an explicit user preference, default false.

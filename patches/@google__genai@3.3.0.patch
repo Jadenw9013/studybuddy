@@ -1,0 +1,26 @@
+diff --git a/dist/node/index.cjs b/dist/node/index.cjs
+index a10356a63ab178e148c9a54faa69607597275062..40b0c58b09095c7427180f291b39e8febe489ac1 100644
+--- a/dist/node/index.cjs
++++ b/dist/node/index.cjs
+@@ -13752,7 +13752,7 @@ class ApiClient {
+         const baseUrl = this.getBaseUrl();
+         const urlParts = new URL(baseUrl);
+         urlParts.protocol = urlParts.protocol == 'http:' ? 'ws' : 'wss';
+-        return urlParts.toString();
++        return urlParts.toString().replace(/\/$/, '');
+     }
+     setBaseUrl(url) {
+         if (this.clientOptions.httpOptions) {
+diff --git a/dist/node/index.mjs b/dist/node/index.mjs
+index 7f63dc559e69055b7e0d629d98a756c8eb2f8c52..f296e22768917a27d0cb9f46368653b31f67fd5c 100644
+--- a/dist/node/index.mjs
++++ b/dist/node/index.mjs
+@@ -13730,7 +13730,7 @@ class ApiClient {
+         const baseUrl = this.getBaseUrl();
+         const urlParts = new URL(baseUrl);
+         urlParts.protocol = urlParts.protocol == 'http:' ? 'ws' : 'wss';
+-        return urlParts.toString();
++        return urlParts.toString().replace(/\/$/, '');
+     }
+     setBaseUrl(url) {
+         if (this.clientOptions.httpOptions) {

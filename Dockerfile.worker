@@ -1,0 +1,9 @@
+FROM python:3.12.12-slim
+WORKDIR /app
+RUN pip install --no-cache-dir uv==0.13.8
+COPY apps/worker/pyproject.toml apps/worker/uv.lock apps/worker/
+ENV UV_PROJECT_ENVIRONMENT=/app/.venv
+RUN uv sync --frozen --project apps/worker --python 3.12.12
+COPY apps/worker apps/worker
+ENV NODE_ENV=production
+CMD ["/app/.venv/bin/python", "apps/worker/runner.py"]

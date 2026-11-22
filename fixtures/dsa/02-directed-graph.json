@@ -1,0 +1,71 @@
+{
+  "format": "live-tutor-dsa-v1",
+  "title": "Mock DSA: directed dependency graph",
+  "description": "Seven task nodes with directed dependency edges. Start at A. Edge arrows may only be followed in their indicated direction. Use the nodes-list order to break traversal ties. G has two incoming edges and must not be visited twice. These are synthetic teaching data.",
+  "structure": {
+    "kind": "graph",
+    "directed": true,
+    "rootId": "A",
+    "nodes": [
+      {
+        "id": "A",
+        "label": "A"
+      },
+      {
+        "id": "B",
+        "label": "B"
+      },
+      {
+        "id": "C",
+        "label": "C"
+      },
+      {
+        "id": "D",
+        "label": "D"
+      },
+      {
+        "id": "E",
+        "label": "E"
+      },
+      {
+        "id": "F",
+        "label": "F"
+      },
+      {
+        "id": "G",
+        "label": "G"
+      }
+    ],
+    "edges": [
+      {
+        "from": "A",
+        "to": "B"
+      },
+      {
+        "from": "A",
+        "to": "C"
+      },
+      {
+        "from": "B",
+        "to": "D"
+      },
+      {
+        "from": "B",
+        "to": "E"
+      },
+      {
+        "from": "C",
+        "to": "F"
+      },
+      {
+        "from": "E",
+        "to": "G"
+      },
+      {
+        "from": "F",
+        "to": "G"
+      }
+    ]
+  },
+  "teachingExample": true
+}

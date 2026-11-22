@@ -1,0 +1,22 @@
+{
+  "name": "@live-tutor/jupyterlab-companion",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Locally approved, single-notebook Live Tutor companion",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "files": ["lib", "style", "live_tutor_companion/labextension"],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "build:labextension": "node scripts/build-labextension.mjs",
+    "test": "node --test test/core.test.mjs"
+  },
+  "dependencies": {
+    "@jupyterlab/application": "4.6.6",
+    "@jupyterlab/notebook": "4.6.6",
+    "@lumino/widgets": "2.10.0",
+    "react": "18.3.1"
+  },
+  "devDependencies": {"@jupyterlab/builder": "4.5.11", "typescript": "5.9.3"},
+  "jupyterlab": {"extension": true, "outputDir": "live_tutor_companion/labextension"}
+}

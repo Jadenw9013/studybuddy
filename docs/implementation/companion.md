@@ -1,0 +1,25 @@
+# M5 companion implementation and evidence
+
+The JupyterLab 4 plugin lives in `extensions/jupyterlab`. It uses JupyterLab's notebook tracker and shared model transaction API, not a browser driver. Remote messages can focus, highlight or request a before/after preview. Applying a proposal or inverse is initiated by a local button and rechecks document identity, cell ID, exact base source/hash, grant, expiry and a single-use preview token. The host writes one shared-model transaction so notebook undo stays available. It does not execute cells, access the filesystem or control unrelated apps.
+
+Pairing uses an outbound `wss://…/companion?secret=…` connection, or loopback WS for local development. The secret is consumed once by the service. Stop, document switch/rename, disconnect and expiration clear the local grant and pending diff. Reconnection requires new pairing; no grant is silently renewed. The panel shares the active cell text and a bounded list of up to 500 cell IDs, indices and source hashes. Other source text stays local until selected. Focus/highlight can navigate only to a listed cell of this paired notebook; proposals stay restricted to the selected cell. The metadata fingerprint includes source hashes and order so it updates when cells change. Unrelated notebooks are inaccessible.
+
+Final action receipts persist in localStorage with action ID, payload metadata, hashes and result revision. **Important:** the receipt payload is hashed before persistence, so it contains no cell source. Inverse text remains in memory only. A receipt query after connection loss returns the observed local result; it never retries a write. A differing payload under an existing action ID fails.
+
+The package's **11/11** local state tests pass and cover proposal without Apply, local single-use Apply, replay, payload conflict, preservation of a student's edit, switch/revoke/expiry, reject, inverse preview/Apply, forbidden actions, replacement hashes, concurrent delivery, revoke during async checking and TLS URL checks. Run `node --test extensions/jupyterlab/test/core.test.mjs` from the repository root. TypeScript compilation and the federated production build passed with JupyterLab 4.6.6, `@jupyterlab/builder` 4.5.11 and webpack 5.112.2. These are synthetic local checks and do not close the live helper gate.
+
+For the actual-host automated integration test, install the prebuilt package into the isolated extension `.venv`, then launch this test-only host from `extensions/jupyterlab`:
+
+```powershell
+$env:JUPYTER_RUNTIME_DIR = "$PWD/.runtime"
+$env:JUPYTER_CONFIG_DIR = "$PWD/.config"
+.venv/Scripts/python.exe -m jupyterlab --no-browser --ip=127.0.0.1 --port=8891 --ServerApp.port_retries=0 --ServerApp.root_dir=C:\Dev\StudyBuddy\extensions\jupyterlab\evals --IdentityProvider.token=live-tutor-synthetic-host --LabApp.expose_app_in_browser=True
+```
+
+From the repository root run `node --import tsx extensions/jupyterlab/evals/real-host.mjs`. It starts the actual fixture Fastify service on port 3011, signs in by HTTP, creates a lesson, pairs over the service WebSocket, opens the actual Jupyter notebook, and uses the local panel buttons. The notebook is not executed. Results and a synthetic screenshot are written to `extensions/jupyterlab/evals/output`. `expose_app_in_browser` is only for this isolated test and is not needed for normal companion use.
+
+**Observed actual-host result:** **18/18 checks passed** on JupyterLab 4.6.6 with Chromium on Windows, November 16, 2026 (08:19:36–08:20:47 UTC). The final run had zero browser page errors. It verified single-use pairing-secret rejection, navigation to another cell and back, unknown-cell denial, actual cell focus, exact editor text selection, preview without a write, local Apply, receipt query and retry, Keep mine, stale-source refusal, native per-cell undo, a real elapsed sixty-second approval lease, Stop, post-Stop denial, notebook-switch and rename revocation, full host reload without permission renewal, and recovery after a committed host write before receipt delivery. For that forced acknowledgement loss, the actual cell emitted **exactly one source-write event** (`lostAckObservedSourceWrites: 1`); re-pairing, receipt reconciliation and replay did not write again. Native text undo uses the cell shared model because JupyterLab's default is per-cell rather than document-wide text undo. The generated `real-host.json` and `real-host.png` contain the run evidence. This was one automated synthetic actual-host run: **0 human approvals**, no provider integration and no learner outcome evidence.
+
+**Open human gate:** **0 human approvals** observed so far. The automated actual-host suite now covers rename, full reload and forced disconnect after a committed write before acknowledgement. Before advertising external edits, verify the workflow with a real learner, including whether the scope, local diff, Apply/Keep mine and Stop controls are understood. Record participant completion, interventions, versions and failures separately from automated checks. A static uploaded `.ipynb` remains a read-only snapshot.
+
+
