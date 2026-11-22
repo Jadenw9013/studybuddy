@@ -9,6 +9,7 @@ import type {
 } from "../../api/src/studio";
 import RichText from "./RichText";
 import Icon from "./Icon";
+import { fetchApiResponse, readApiJson } from "./api-response";
 
 type Artifact = Omit<
   StudioArtifact,
@@ -26,7 +27,7 @@ async function request(
   body?: unknown,
   signal?: AbortSignal,
 ) {
-  const response = await fetch(url, {
+  const response = await fetchApiResponse(url, {
     method,
     credentials: "same-origin",
     cache: "no-store",
@@ -38,10 +39,7 @@ async function request(
           body: JSON.stringify(body),
         }),
   });
-  const value = await response.json().catch(() => ({}));
-  if (!response.ok)
-    throw Error(value.message ?? "This study tool could not be loaded.");
-  return value;
+  return readApiJson(response, "This study tool could not be loaded.");
 }
 function location(c: StudioCitation) {
   const p = c.locator;

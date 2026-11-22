@@ -2,6 +2,7 @@
 import { useEffect, useId, useRef, useState } from "react";
 import RichText from "./RichText";
 import Icon from "./Icon";
+import { fetchApiResponse, readApiJson } from "./api-response";
 
 type Note = {
   id: string;
@@ -36,16 +37,13 @@ export default function SavedNotes({
   const titleId = useId(),
     contentId = useId();
   const request = async (url: string, method = "GET", body?: unknown) => {
-    const response = await fetch(url, {
+    const response = await fetchApiResponse(url, {
       method,
       cache: "no-store",
       headers: body ? { "Content-Type": "application/json" } : undefined,
       body: body ? JSON.stringify(body) : undefined,
     });
-    const data = await response.json();
-    if (!response.ok)
-      throw Error(data.message ?? "This note could not be saved.");
-    return data;
+    return readApiJson(response, "This note could not be saved.");
   };
   async function load(token = epoch.current) {
     const data = await request(`/api/lessons/${lessonId}/notes`);

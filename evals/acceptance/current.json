@@ -1,11 +1,11 @@
 {
-  "updatedAt": "2026-11-22T07:05:40.329Z",
+  "updatedAt": "2026-11-22T07:15:43.441Z",
   "status": "pilot_with_open_live_voice_gates",
   "checks": {
     "automated": {
-      "passed": 281,
-      "total": 281,
-      "typescript": 251,
+      "passed": 285,
+      "total": 285,
+      "typescript": 255,
       "collector": 3,
       "companion": 11,
       "parser": 13,
@@ -82,8 +82,16 @@
     "formerlyFailingDevelopmentEnvironmentBuild": "passed with production wrapper",
     "pdfWorkerProductionSmoke": "HTTP200 and pinned byte hash matched",
     "publicApiOriginRouting": "focused contracts and WSS client tests passed",
+    "serviceOutageHandling": "4 focused regressions passed; proxy/network/invalid JSON errors show service unavailability without fabricated responses",
     "ciRunner": "Ubuntu24.04 pinned for Python3.12.12",
-    "hostedServiceConfiguration": "prepared; placeholder Compose validation passed; no services provisioned",
+    "hostedServiceConfiguration": "prepared; placeholder Compose validation and both actual Docker image builds passed; no services provisioned",
+    "hostedFrontend": {
+      "sourceCommit": "c1dc6cc1ae75115a04737c87b791e307bfb728ee",
+      "vercelProjects": "studybuddy and studybuddy-6ozm both Ready",
+      "browserObservation": "Public page rendered; backend proxy unavailable because hosted API is not configured",
+      "cloudRegression": "passed",
+      "cloudRegressionUrl": "https://github.com/Jadenw9013/studybuddy/actions/runs/44996654612"
+    },
     "hostedIntegration": "open",
     "guide": "docs/implementation/production-hosting.md"
   }

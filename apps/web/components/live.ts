@@ -1,5 +1,7 @@
 "use client";
 
+import { fetchApiResponse, readApiJson } from "./api-response";
+
 // Providers can generate speech faster than realtime. Buffer ordinary bursts
 // without interpreting them as learner interruption; still bound PCM and nodes.
 const MAX_BUFFERED_AUDIO_SECONDS = 60;
@@ -148,7 +150,7 @@ export class LiveAudio {
   }
 
   private async ticket(): Promise<{ wsPath: string; expiresAt: number }> {
-    const response = await fetch(
+    const response = await fetchApiResponse(
       `/api/lessons/${encodeURIComponent(this.lessonId)}/live-ticket`,
       {
         method: "POST",
@@ -157,11 +159,7 @@ export class LiveAudio {
         signal: this.pending?.signal,
       },
     );
-    const ticket = await response.json();
-    if (!response.ok)
-      throw new Error(
-        ticket.message || "Live voice is unavailable. Continue by typing.",
-      );
+    const ticket = await readApiJson(response, "Live voice is unavailable. Continue by typing.");
     if (
       typeof ticket.wsPath !== "string" ||
       !ticket.wsPath.startsWith("/live?ticket=") ||

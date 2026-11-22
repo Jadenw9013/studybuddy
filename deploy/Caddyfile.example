@@ -1,0 +1,17 @@
+# For Caddy installed ON the API VM (not in a separate container).
+# Replace this hostname with the host from API_PUBLIC_ORIGIN.
+api.studybuddy.example.com {
+	# Preserve these paths, Origin and cookies; Caddy handles WebSocket upgrades.
+	@public_api path /api/* /live /companion
+	handle @public_api {
+		reverse_proxy 127.0.0.1:3001 {
+			# Allow a 20-minute lesson to finish across a proxy config reload.
+			stream_close_delay 25m
+		}
+	}
+
+	# Internal worker routes and all other paths are unavailable at this edge.
+	handle {
+		respond 404
+	}
+}

@@ -14,6 +14,7 @@ import SourcesPanel from "./SourcesPanel";
 import SavedNotes from "./SavedNotes";
 import StudioPanel from "./StudioPanel";
 import { LiveAudio } from "./live";
+import { fetchApiResponse, readApiJson, parseApiStreamEvent, throwServiceUnavailable } from "./api-response";
 import { mapPoint } from "../../../packages/board/index";
 const id = () => crypto.randomUUID();
 const sourceLocation = (locator: any) =>
@@ -37,7 +38,7 @@ async function api(
   onProgress?: (stage: string) => void,
 ) {
   const streaming = url.endsWith("/messages") && method === "POST";
-  const r = await fetch(url, {
+  const r = await fetchApiResponse(url, {
     method,
     credentials: "same-origin",
     cache: "no-store",
@@ -54,19 +55,20 @@ async function api(
       body instanceof FormData ? body : body ? JSON.stringify(body) : undefined,
   });
   if (r.headers.get("Content-Type")?.includes("application/x-ndjson")) {
-    const reader = r.body!.getReader(),
+    if (!r.body) throwServiceUnavailable();
+    const reader = r.body.getReader(),
       decoder = new TextDecoder();
     let pending = "";
     let result: any;
     for (;;) {
-      const { done, value } = await reader.read();
+      const { done, value } = await reader.read().catch(throwServiceUnavailable);
       pending += decoder.decode(value, { stream: !done });
       let newline;
       while ((newline = pending.indexOf("\n")) >= 0) {
         const line = pending.slice(0, newline);
         pending = pending.slice(newline + 1);
         if (!line) continue;
-        const event = JSON.parse(line);
+        const event = parseApiStreamEvent(line);
         if (event.type === "error") throw Error(event.message);
         if (event.type === "complete") result = event.result;
         if (event.stage) onProgress?.(event.stage);
@@ -79,9 +81,7 @@ async function api(
       );
     return result;
   }
-  const data = await r.json();
-  if (!r.ok) throw Error(data.message ?? "This action could not finish.");
-  return data;
+  return readApiJson(r);
 }
 const prompts: Record<string, string> = {
   histogram:
